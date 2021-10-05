@@ -1,4 +1,8 @@
 <MainScreen>:
+
+    staircase_speed_slider: staircaseSpeed
+    ramp_speed_slider: rampSpeed
+
     name: 'main'
     FloatLayout:
         size_hint: None, None
@@ -78,9 +82,9 @@
         Slider:
             id: rampSpeed
             orientation: 'horizontal'
-            min: 10
-            max: 200
-            value: root.rampSpeed
+            min: 0
+            max: 8
+            value: 0
             step: 1
             center_x: root.width * 0.6
             y: root.height * 0.15
@@ -90,10 +94,10 @@
         Slider:
             id: staircaseSpeed
             orientation: 'horizontal'
-            min: 10
-            max: 50
-            value: root.staircaseSpeed
-            step: 1
+            min: 0
+            max: 100000
+            value: 0
+            step: 1000
             center_x: root.width * 0.6
             y: root.height * 0.05
             size_hint_x: 7
@@ -110,13 +114,13 @@
             font_size: 55
             bold: True
             center_x: root.width * 0.5
-            halign: 'center'
+            align: 'center'
             y: root.height * 0.75
             color: 0.9, 0.9, 0.9, 1
 
         Label:
             id: rampSpeedLabel
-            text: 'Ramp Speed: ' + str(root.rampSpeed)
+            text: 'Ramp Speed: ' + str(rampSpeed.value)
             font_size: 40
             center_x: root.width * 0.22
             y: root.height * 0.15
@@ -124,7 +128,7 @@
 
         Label:
             id: staircaseSpeedLabel
-            text: 'Staircase Speed: ' + str(root.staircaseSpeed)
+            text: 'Staircase Speed: ' + str(staircaseSpeed.value)
             font_size: 40
             center_x: root.width * 0.20
             y: root.height * 0.05
