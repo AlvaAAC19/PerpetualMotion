@@ -110,7 +110,7 @@ class MainScreen(Screen):
     def toggleGate(self):
         #if self.servoPosition == 0:
         cyprus.set_servo_position(2, 0.5)
-        sleep(2)
+        sleep(0.5)
         cyprus.set_servo_position(2, 0)
             #self.servoPosition = 0.5
         #else:
@@ -147,36 +147,43 @@ class MainScreen(Screen):
         s0.softStop()
         s0.go_until_press(0, 64000)
         print("Move ramp up and down here")
-        
+
+    def thread_auto(self):
+        self.is_auto = True
+        Thread(target=self.auto).start()
+
     def auto(self):
-        while True:
-            while s0.get_position_in_units() < 28:
+        while self.is_auto:
+            while s0.get_position_in_units() < 28 and self.is_auto:
                 if (cyprus.read_gpio() & 0b0010) == 0:  # binary bitwise AND of the value returned from read.gpio()
                     sleep(0.1)
                     if (cyprus.read_gpio() & 0b0010) == 0:
                         cyprus.set_servo_position(2, 0)
                         s0.start_relative_move(28)
                         sleep(0.1)
-            s0.softStop()
-            cyprus.set_pwm_values(1, period_value=100000, compare_value=50000, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
-            s0.go_until_press(0, 64000)
-            sleep(13)
-            cyprus.set_servo_position(2, 0.5)
-            cyprus.set_pwm_values(1, period_value=100000, compare_value=0, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
+            if self.is_auto:
+                s0.softStop()
+                cyprus.set_pwm_values(1, period_value=100000, compare_value=50000, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
+                s0.go_until_press(0, 64000)
+                sleep(13)
+            if self.is_auto:
+                cyprus.set_servo_position(2, 0.5)
+                cyprus.set_pwm_values(1, period_value=100000, compare_value=0, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
 
         print("Run through one cycle of the perpetual motion machine")
         
     def setRampSpeed(self, value):
         #self.ramp_speed_slider
-        s0.set_speed(self.ramp_speed_slider.value)
+        s0.set_speed(value)
         print("Set the ramp speed and update slider text")
         
     def setStaircaseSpeed(self, speed):
         #self.staircase_speed_slider
         cyprus.set_pwm_values(1, period_value=100000, compare_value=speed, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
         print("Set the staircase speed and update slider text")
-        
+
     def initialize(self):
+        self.is_auto = False
         cyprus.initialize()
         cyprus.set_servo_position(2, 0)
         cyprus.set_pwm_values(1, period_value=100000, compare_value=0, compare_mode=cyprus.LESS_THAN_OR_EQUAL)

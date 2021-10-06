@@ -22,17 +22,30 @@
             background_color: 0.7, 0.7, 0.7, 1
             on_release: root.quit()
 
-        DPEAButton:  
+        DPEAButton:
             id: auto
             color: 0.917, 0.796, 0.380, 1
             text: "Start"
-            center_x: root.width * 0.5
+            center_x: root.width * 0.25
             y: root.height * 0.55
             background_color: 1, 0, 0, 0
             background_normal: ''
             size_hint: None,None
             size: 300,100
-            on_press: root.auto()
+            on_press: root.thread_auto()
+            on_release: root.resetColors()
+
+        DPEAButton:
+            id: stop_auto
+            color: 0.917, 0.796, 0.380, 1
+            text: "Stop"
+            center_x: root.width * 0.75
+            y: root.height * 0.55
+            background_color: 1, 0, 0, 0
+            background_normal: ''
+            size_hint: None,None
+            size: 300,100
+            on_press: root.initialize()
             on_release: root.resetColors()
 
         # Turn on/off gate
@@ -59,7 +72,7 @@
             background_normal: ''
             size_hint: None,None
             size: 300,100
-            on_press: root.toggleRamp()
+            on_press: root.thread_toggleRamp()
             on_release: root.resetColors()
 
         DPEAButton:
@@ -83,8 +96,8 @@
             id: rampSpeed
             orientation: 'horizontal'
             min: 0
-            max: 8
-            value: 0
+            max: 5
+            value: 2
             step: 1
             center_x: root.width * 0.6
             y: root.height * 0.15
