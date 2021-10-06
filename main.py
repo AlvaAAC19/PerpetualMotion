@@ -150,22 +150,25 @@ class MainScreen(Screen):
         
     def auto(self):
         while True:
-            cyprus.set_pwm_values(1, period_value=100000, compare_value=60000, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
-            sleep(7)
-            cyprus.set_pwm_values(1, period_value=100000, compare_value=0, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
+            while s0.get_position_in_units() < 28:
+                if (cyprus.read_gpio() & 0b0010) == 0:  # binary bitwise AND of the value returned from read.gpio()
+                    sleep(0.1)
+                    if (cyprus.read_gpio() & 0b0010) == 0:
+                        cyprus.set_servo_position(2, 0)
+                        s0.start_relative_move(28)
+                        sleep(0.1)
+            s0.softStop()
+            cyprus.set_pwm_values(1, period_value=100000, compare_value=50000, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
+            s0.go_until_press(0, 64000)
+            sleep(13)
             cyprus.set_servo_position(2, 0.5)
-            sleep(4)
-            s0.start_relative_move(28)
-            sleep(0.5)
-            s0.go_until_press(0)
-            sleep(1)
+            cyprus.set_pwm_values(1, period_value=100000, compare_value=0, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
 
         print("Run through one cycle of the perpetual motion machine")
         
-    def setRampSpeed(self):
+    def setRampSpeed(self, value):
         #self.ramp_speed_slider
         s0.set_speed(self.ramp_speed_slider.value)
-        s0.start_relative_move(28)
         print("Set the ramp speed and update slider text")
         
     def setStaircaseSpeed(self, speed):
